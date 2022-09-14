@@ -2,13 +2,13 @@ import pandas as pd
 import datetime as dt
 import os
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 
 class db:
     def __init__(self):
-        self.transactions = db.tansaction_init()
+        self.transactions = db.transaction_init()
         self.cc = pd.read_csv(r'db\country_codes.csv', index_col=0)
         self.customers = pd.read_csv(r'db\customers.csv', index_col=0)
         self.prod_info = pd.read_csv(r'db\prod_cat_info.csv')
@@ -18,7 +18,7 @@ class db:
         transactions = pd.DataFrame()
         src = r'db\transactions'
         for filename in os.listdir(src):
-            transactions = transactions.append(pd.read_csv(os.path.join(src, filename), index_col=0))
+            transactions = pd.concat([transactions, pd.read_csv(os.path.join(src, filename))])
         
         def convert_dates(x):
             try:
@@ -55,6 +55,7 @@ app.layout = html.Div([html.Div([dcc.Tabs(id='tabs', value='tab-1', children=[
     html.Div(id='tabs-content')],
     style={'width':'80%', 'margin':'auto'})],
     style={'height':'100%'})
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
