@@ -44,3 +44,17 @@ class db:
 
 df = db()
 df.merge()
+
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
+app.layout = html.Div([html.Div([dcc.Tabs(id='tabs', value='tab-1', children=[
+    dcc.Tab(label='Sprzedaż globalna', value='tab-1'),
+    dcc.Tab(label='Produkty', value='tab-2')
+    ]),
+    html.Div(id='tabs-content')],
+    style={'width':'80%', 'margin':'auto'})],
+    style={'height':'100%'})
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
