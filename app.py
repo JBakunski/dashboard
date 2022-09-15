@@ -50,8 +50,11 @@ class db:
 df = db()
 df.merge()
 
+USERNAME_PASSWORD = {'user':'pass'}
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+auth = dash_auth.BasicAuth(app, USERNAME_PASSWORD)
 
 app.layout = html.Div([html.Div([dcc.Tabs(id='tabs', value='tab-1', children=[
     dcc.Tab(label='Sprzedaż globalna', value='tab-1'),
@@ -74,7 +77,7 @@ def render_content(tab):
     [Input('sales-range', 'start_date'),Input('sales-range', 'end_date')])
 def tab1_bar_sales(start_date, end_date):
     truncated = df.merged[(df.merged['tran_date']>=start_date) & (df.merged['tran_date']<=end_date)]
-    grouped = truncated[truncated['total_amt']>0].groupby([pd.Grouper(key='tran_date', freq='M'), 'Stgore_type'])['total_amt'].sum().round(2).unstack()
+    grouped = truncated[truncated['total_amt']>0].groupby([pd.Grouper(key='tran_date', freq='M'), 'Store_type'])['total_amt'].sum().round(2).unstack()
 
     traces = []
     for col in grouped.columns:
@@ -85,9 +88,10 @@ def tab1_bar_sales(start_date, end_date):
     fig = go.Figure(data=data, layout=go.Layout(title='Przychody', barmode='stack', legend=dict(x=0, y=-0.5)))        
     return fig
 
-@app.callback(Output('choropleth-sales', 'figure'),
-            [Input('sales-range', 'start_date'), Input('sales-range', 'end-date')])
-def tab1_choropleth_sales(start_date, end_date):
+@app.callback(Output('choropleth-sales','figure'),
+            [Input('sales-range','start_date'),Input('sales-range','end_date')])
+def tab1_choropleth_sales(start_date,end_date):
+
     truncated = df.merged[(df.merged['tran_date']>=start_date)&(df.merged['tran_date']<=end_date)]
     grouped = truncated[truncated['total_amt']>0].groupby('country')['total_amt'].sum().round(2)
 
@@ -98,6 +102,7 @@ def tab1_choropleth_sales(start_date, end_date):
     fig = go.Figure(data=data,layout=go.Layout(title='Mapa',geo=dict(showframe=False,projection={'type':'natural earth'})))
 
     return fig
+
 
 @app.callback(Output('barh-prod-subcat','figure'),
             [Input('prod_dropdown','value')])
