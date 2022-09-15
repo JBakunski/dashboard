@@ -9,6 +9,7 @@ import dash_auth
 import plotly.graph_objects as go
 import tab1
 import tab2
+import tab3
 
 
 class db:
@@ -58,7 +59,8 @@ auth = dash_auth.BasicAuth(app, USERNAME_PASSWORD)
 
 app.layout = html.Div([html.Div([dcc.Tabs(id='tabs', value='tab-1', children=[
     dcc.Tab(label='Sprzedaż globalna', value='tab-1'),
-    dcc.Tab(label='Produkty', value='tab-2')
+    dcc.Tab(label='Produkty', value='tab-2'),
+    dcc.Tab(label='Kanały sprzedaży', value='tab-3')
     ]),
     html.Div(id='tabs-content')],
     style={'width':'80%', 'margin':'auto'})],
@@ -72,6 +74,8 @@ def render_content(tab):
         return tab1.render_tab(df.merged)
     elif tab == 'tab-2':
         return tab2.render_tab(df.merged)
+    elif tab == 'tab-3':
+        return tab3.render_tab(df.merged)
 
 @app.callback(Output('bar-sales', 'figure'),
     [Input('sales-range', 'start_date'),Input('sales-range', 'end_date')])
