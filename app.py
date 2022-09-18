@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import tab1
 import tab2
 import tab3
-import db
+from data import db
 
 
 
