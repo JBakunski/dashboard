@@ -137,6 +137,25 @@ def tab3_barh_store_subcat(chosen_store):
     fig = go.Figure(data=data,layout=go.Layout(barmode='stack',margin={'t':20,}))
     return fig
 
+@app.callback(Output('pie-weekday-sales','figure'),
+            [Input('store_dropdown','value')])
+def tab3_pie_store_subcat(chosen_store):
+
+    # grouped = df.merged[(df.merged['total_amt']>0)&(df.merged['Store_type']==chosen_store)].pivot_table(index='Store_type',columns='Gender',values='total_amt',aggfunc='sum').assign(_sum=lambda x: x['F']+x['M']).sort_values(by='_sum').round(2)
+    grouped = df.merged[(df.merged['total_amt']>0)&(df.merged['Store_type']==chosen_store)].groupby('tran_date')['total_amt'].sum()
+    labels = grouped.index.weekday.sort_values().map({0: 'Poniedziałek',
+                                                              1: 'Wtorek',
+                                                              2: 'Środa',
+                                                              3: 'Czwartek',
+                                                              4: 'Piątek',
+                                                              5: 'Sobota',
+                                                              6: 'Niedziela'})
+                                
+    fig = go.Figure(data=[go.Pie(labels=labels, values=grouped.values, sort=False)], layout=go.Layout(title='Udział poszczególnych kanałów w sprzedaży'))
+
+    
+    return fig
+
 
 
 if __name__ == '__main__':
